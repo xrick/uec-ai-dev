@@ -1,11 +1,11 @@
-uec-iot-10 dataset
+uec-iot sed model dataset
 TrainSet:
 	Positive:
 		1. Alarm:52
 		2. Help Speech
-			Mandrain:71
-			English:72
-			Janpan:73
+			English:71
+			Janpan:72
+			Mandrain:73
 			Kondong(粵語):74
 			Hakka(客語):75
 			Hokkien(台語):76
@@ -16,3 +16,8 @@ TrainSet:
 ValidationSet:
 
 TestSet:
+
+===========================================================================================
+2024/07/07
+help-eng:
+	- 20150, 6000-points interval, repeat.
