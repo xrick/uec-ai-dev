@@ -1,0 +1,7 @@
+{
+    "fold1":{"train":["fold2","fold3","fold4","fold5"],"val":["fold1"]},
+    "fold2":{"train":["fold1","fold3","fold4","fold5"],"val":["fold2"]},
+    "fold3":{"train":["fold1","fold2","fold4","fold5"],"val":["fold3"]},
+    "fold4":{"train":["fold1","fold2","fold3","fold5"],"val":["fold4"]},
+    "fold5":{"train":["fold1","fold2","fold3","fold4"],"val":["fold5"]}
+}
