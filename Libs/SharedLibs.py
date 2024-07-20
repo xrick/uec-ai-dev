@@ -8,7 +8,7 @@ def listdir_nohidden(path):
 
 def getFileList(srcDir,regex='.*\.wav'):
     # example: regex = '.*\.mp3'
-    results = listdir_nohidden(srcDir);#os.listdir(srcDir)
+    results = [f for f in os.listdir(srcDir) if not f.startswith('.')];#listdir_nohidden(srcDir);#os.listdir(srcDir)
     out_files = []
     cnt_files = 0
     for file in results:
