@@ -1,9 +1,14 @@
 import re
 import os
 import subprocess
+import glob;
+
+def listdir_nohidden(path):
+    return glob.glob(os.path.join(path, '*'))
+
 def getFileList(srcDir,regex='.*\.wav'):
     # example: regex = '.*\.mp3'
-    results = os.listdir(srcDir)
+    results = listdir_nohidden(srcDir);#os.listdir(srcDir)
     out_files = []
     cnt_files = 0
     for file in results:
@@ -13,6 +18,7 @@ def getFileList(srcDir,regex='.*\.wav'):
         elif re.match(regex, file,  re.I):  # file.startswith(startExtension) or file.endswith(".txt") or file.endswith(endExtension):
             out_files.append(os.path.join(srcDir, file))
             cnt_files = cnt_files + 1
+        
     return out_files
 
 
