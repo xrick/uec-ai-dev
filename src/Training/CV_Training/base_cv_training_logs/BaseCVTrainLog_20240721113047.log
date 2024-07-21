@@ -1,0 +1,8 @@
+SP-[1] Epoch: 1/1800 | Time: 0m04s (Train 0m03s  Val 0m00s) | Train: LR 0.010000000000000002  Loss 0.78  Acc 49.61% | Val: Loss -0.46  Acc(top1) 26.14% | HA 0.00@0
+
+save model:Base4C_{}_hacc{}_valacc_{}_tracc_{}_{}th_epoch.pt, bestAcc:26.13636589050293, ValAcc:26.13636589050293-TrAcc48.828125-@2
+SP-[1] Epoch: 2/1800 | Time: 0m03s (Train 0m03s  Val 0m00s) | Train: LR 0.010000000000000002  Loss 0.75  Acc 48.83% | Val: Loss -0.46  Acc(top1) 26.14% | HA 26.14@2
+
+save model:Base4C_{}_hacc{}_valacc_{}_tracc_{}_{}th_epoch.pt, bestAcc:26.13636589050293, ValAcc:26.13636589050293-TrAcc49.86979166666667-@2
+SP-[1] Epoch: 3/1800 | Time: 0m03s (Train 0m03s  Val 0m00s) | Train: LR 0.010000000000000002  Loss 0.72  Acc 49.87% | Val: Loss -0.46  Acc(top1) 26.14% | HA 26.14@2
+
