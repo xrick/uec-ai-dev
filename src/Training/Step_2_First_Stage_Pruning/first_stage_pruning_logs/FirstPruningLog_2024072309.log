@@ -1,0 +1,1 @@
+save model:uec_4C_weight_prun_fold1_haacc_{}_valacc{}_tracc{}_epoch_{}_{}.pt, bestAcc:82.38636779785156, valAcc:82.38636779785156, trainAcc:82.29166666666666, record@1-epoch
