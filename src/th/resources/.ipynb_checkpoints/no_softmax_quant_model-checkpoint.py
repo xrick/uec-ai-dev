@@ -81,7 +81,6 @@ class ACDNetQuant(nn.Module):
         self.output = nn.Sequential(
             nn.Softmax(dim=1)
         );
-
         self.quant = QuantStub();
         self.dequant = DeQuantStub();
         # self.quant = torch.ao.quantization.QuantStub();
