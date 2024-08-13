@@ -5,6 +5,7 @@
 
 double parabolic(double* corr, int index);
 int find_first_positive(double* d, int length);
+int argmax(double* arr, int length);
 void correlate(double* signal, int length, double* corr);
 double mean(double* signal, int length);
 double freq_from_autocorr(double* signal, int length, double fs);
