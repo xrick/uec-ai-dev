@@ -12,6 +12,64 @@ double freq_from_autocorr(double* signal, int length, double fs);
 void find(int* condition, int size, int** res, int* res_size);
 void detectAudio(double* signal, int sig_len, int sr, double wanted_freq, double magthreshold, double freqthreshold, double (*freq_func)(double*, int));
 
+/************************FFT implementation***********************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <complex.h>
+#include <math.h>
+
+void fft(complex double *x, int N);
+
+// int main() {
+//     // Example signal initialization
+//     int N = 8; // Size of the signal
+//     complex double *signal = malloc(N * sizeof(complex double));
+
+//     // Initialize the signal with some values (example)
+//     for (int i = 0; i < N; i++) {
+//         signal[i] = i + 0.0 * I; // Replace with actual signal values
+//     }
+
+//     fft(signal, N);
+
+//     // Free allocated memory
+//     free(signal);
+//     return 0;
+// }
+
+// FFT implementation (Cooley-Tukey algorithm)
+void fft(complex double *x, int N) {
+/*
+    x: signal
+*/
+    if (N <= 1) return;
+
+    // Divide
+    complex double *even = malloc(N / 2 * sizeof(complex double));
+    complex double *odd = malloc(N / 2 * sizeof(complex double));
+    for (int i = 0; i < N / 2; i++) {
+        even[i] = x[i * 2];
+        odd[i] = x[i * 2 + 1];
+    }
+
+    // Conquer
+    fft(even, N / 2);
+    fft(odd, N / 2);
+
+    // Combine
+    for (int k = 0; k < N / 2; k++) {
+        complex double t = cexp(-2.0 * I * M_PI * k / N) * odd[k];
+        x[k] = even[k] + t;
+        x[k + N / 2] = even[k] - t;
+    }
+
+    // Free allocated memory
+    free(even);
+    free(odd);
+}
+
+
+
 /***********C codes for freq_from_autocorr***********************/
 
 double mean(double* signal, int length) {
