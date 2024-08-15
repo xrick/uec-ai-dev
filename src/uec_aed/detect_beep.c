@@ -3,6 +3,7 @@
 #include <math.h>
 #include <complex.h>
 
+void fft(complex double *x, int N);
 double parabolic(double* corr, int index);
 int find_first_positive(double* d, int length);
 int argmax(double* arr, int length);
@@ -13,12 +14,6 @@ void find(int* condition, int size, int** res, int* res_size);
 void detectAudio(double* signal, int sig_len, int sr, double wanted_freq, double magthreshold, double freqthreshold, double (*freq_func)(double*, int));
 
 /************************FFT implementation***********************/
-#include <stdio.h>
-#include <stdlib.h>
-#include <complex.h>
-#include <math.h>
-
-void fft(complex double *x, int N);
 
 // int main() {
 //     // Example signal initialization
