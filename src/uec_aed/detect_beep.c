@@ -216,8 +216,9 @@ void detectAudio(double* signal, int sig_len, int sr, double wanted_freq, double
     // Perform FFT (this requires a FFT library, e.g., FFTW)
     // fftw_execute_dft_r2c(plan, window, fftData);
 
-    double* fftData_re = (double*)malloc(sig_len * sizeof(double));
-    double* fftData_im = (double*)malloc(sig_len * sizeof(double));
+    // double* fftData_re = (double*)malloc(sig_len * sizeof(double));
+    // double* fftData_im = (double*)malloc(sig_len * sizeof(double));
+    double* fftData = (double*)malloc(sig_len * sizeof(double));
     if (fftData_re == NULL || fftData_im == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         free(window);
@@ -226,7 +227,7 @@ void detectAudio(double* signal, int sig_len, int sr, double wanted_freq, double
     }
     for (int i = 0; i < sig_len; i++) {
         fftData_re[i] = creal(fftData[i]);
-        fftData_im[i] = cimag(fftData[i]);
+        // fftData_im[i] = cimag(fftData[i]);
     }
     int targetIndex = (int)((double)sig_len * testFreq / sr);
     double magnitude = cabs(fftData_re[targetIndex] + I * fftData_im[targetIndex]);
