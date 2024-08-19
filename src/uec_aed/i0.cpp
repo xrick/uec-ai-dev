@@ -177,18 +177,18 @@ float i0(float x)
 
 
 
-double i0e(double x)
-{
-  double y;
+// double i0e(double x)
+// {
+//   double y;
 
-  if (x < 0)
-    x = -x;
-  if (x <= 8.0) {
-    y = (x / 2.0) - 2.0;
-    return (chbevl(y, A, 30));
-  }
+//   if (x < 0)
+//     x = -x;
+//   if (x <= 8.0) {
+//     y = (x / 2.0) - 2.0;
+//     return (chbevl(y, A, 30));
+//   }
 
-  return (chbevl(32.0 / x - 2.0, B, 25) / sqrt(x));
+//   return (chbevl(32.0 / x - 2.0, B, 25) / sqrt(x));
 
-}
+// }
 
