@@ -159,18 +159,18 @@ static double B[] = {
   8.04490411014108831608E-1
 };
 
-float i0(float x)
+double i0(double x)
 {
-  float y;
+  double y;
 
   if (x < 0)
     x = -x;
   if (x <= 8.0) {
     y = (x / 2.0) - 2.0;
-    return (float)(exp(x) * chbevl(y, A, 30));
+    return (exp(x) * chbevl(y, A, 30));
   }
 
-  return (float)(exp(x) * chbevl(32.0 / x - 2.0, B, 25) / sqrt(x));
+  return (exp(x) * chbevl(32.0 / x - 2.0, B, 25) / sqrt(x));
 
 }
 

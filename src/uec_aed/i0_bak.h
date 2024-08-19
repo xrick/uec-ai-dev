@@ -79,6 +79,6 @@
    See i0().
 
 */
-float i0(float x);
+double i0(double x);
 
 #endif
