@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include <complex.h>
-#include "complex.h"
 #include "beep_clear_clip_01_22K.h"
 
 // #ifndef _RFFT_H 
@@ -17,21 +16,27 @@
 // #define PI          3.1415926
 // #define pi          3.14159265358979
 
+void kaiser_window(double *window, int size, double beta);
+double bessel_i0(double x);
 
 float chbevl(float x, float array[], int n);
 float i0(float x);
+int kaiser_window_2( float beta, int M, float *window );
+
+void compute_dft(float fftData[], float signal[], int N);
+void compute_magnitude(double complex X[], double magnitude[], int N);
 void dft_1(float x[], float result[], int num_elems);
-complex *dft(complex *h, ulint N);
-float parabolic(float* corr, int index);
+
 int find_first_positive(float* d, int length);
-int kaiser( float beta, int M, float *window );
+void find(int* condition, int size, int** res, int* res_size);
 int argmax(float* arr, int length);
 void correlate(float* signal, int length, float* corr);
 float mean(float* signal, int length);
+
 float freq_from_autocorr(float* signal, int length, float fs);
 // void freq_from_fft(float* signal, int N, int dft_elements, float fs, float* result);
 float freq_from_fft(float* signal, int N, int dft_elements, float fs);
-void find(int* condition, int size, int** res, int* res_size);
+
 void detectAudio(float* signal, int sig_len, int sr, int dft_len, float wanted_freq, float magthreshold, float freqthreshold);
 
 static float A[] = {
@@ -99,37 +104,6 @@ static float B[] = {
   3.36911647825569408990E-3,
   8.04490411014108831608E-1
 };
-
-float chbevl(float x, float array[], int n)
-{
-  float b0, b1, b2, *p;
-  int i;
-  p = array;
-  b0 = *p++;
-  b1 = 0.0;
-  i = n - 1;
-  do {
-    b2 = b1;
-    b1 = b0;
-    b0 = x * b1 - b2 + *p++;
-  }
-  while (--i);
-  return (0.5 * (b0 - b2));
-}
-
-float i0(float x)
-{
-  float y;
-
-  if (x < 0)
-    x = -x;
-  if (x <= 8.0) {
-    y = (x / 2.0) - 2.0;
-    return (float)(exp(x) * chbevl(y, A, 30));
-  }
-  return (float)(exp(x) * chbevl(32.0 / x - 2.0, B, 25) / sqrt(x));
-}
-
 
 
 float mean(float* signal, int length) 
@@ -212,27 +186,108 @@ void dft_1(float x[], float result[], int num_elems) {
 }
 
 /* DFT: h is the input vector of lenth N */
-complex *dft_2(complex *h, ulint N){
+// complex *dft_2(complex *h, ulint N){
         
-        complex *H, aux;
-        register ulint n, k;
+//         complex *H, aux;
+//         register ulint n, k;
                 
-        H=makecm(N, 1);
-        cm_zero(H, N, 1);
+//         H=makecm(N, 1);
+//         cm_zero(H, N, 1);
         
-        for(n=0; n<N; n++){
-            for(k=0; k<N; k++){
-                aux.Re=cos((double)(2*PI*k*n)/N);
-                aux.Im=sin((double)(2*PI*k*n)/N);
-                H[n]=cadd(H[n], cmult(h[k], aux));
-            }
+//         for(n=0; n<N; n++){
+//             for(k=0; k<N; k++){
+//                 aux.Re=cos((double)(2*PI*k*n)/N);
+//                 aux.Im=sin((double)(2*PI*k*n)/N);
+//                 H[n]=cadd(H[n], cmult(h[k], aux));
+//             }
+//         }
+        
+//         return H;
+// }
+
+void compute_dft(float fftData[], float signal[], int N) {
+/*
+N: length of dft length or can set the legth of signal
+*/
+    int k, n;
+    for (k = 0; k < N; k++) {
+        fftData[k] = 0.0 + 0.0*I; // Initialize to zero
+        for (n = 0; n < N; n++) {
+            double angle = -2 * M_PI * k * n / N;
+            fftData[k] += signal[n] * (cos(angle) + I * sin(angle));
         }
-        
-        return H;
+    }
 }
 
 /*********************** End Of DFT Calculation Section*********************/
-int kaiser( float beta, int M, float *window )
+/*********************** Maganitude Calculation Section*********************/
+void compute_magnitude(double complex X[], double magnitude[], int N) {
+    int k;
+    for (k = 0; k < N; k++) {
+        magnitude[k] = cabs(X[k]); // cabs() returns the magnitude of the complex number
+    }
+}
+/*********************** End Of Maganitude Section*********************/
+/************************** Generate Kaiser Window *************************/
+double bessel_i0(double x) {
+    double sum = 1.0;
+    double term = 1.0;
+    double x_2 = x / 2.0;
+    
+    for (int i = 1; i <= 50; i++) {
+        term *= (x_2 * x_2) / (i * i);
+        sum += term;
+        if (term < 1e-12 * sum) break;
+    }
+    
+    return sum;
+}
+
+void kaiser_window(double *window, int size, double beta) {
+/*
+window:array to put kaiser window values
+size:length of window
+*/
+    double arg;
+    double denom = bessel_i0(beta);
+    
+    for (int n = 0; n < size; n++) {
+        arg = beta * sqrt(1 - pow((2.0 * n / (size - 1) - 1), 2));
+        window[n] = bessel_i0(arg) / denom;
+    }
+}
+////////////////////////////////////////////////////
+float chbevl(float x, float array[], int n)
+{
+  float b0, b1, b2, *p;
+  int i;
+  p = array;
+  b0 = *p++;
+  b1 = 0.0;
+  i = n - 1;
+  do {
+    b2 = b1;
+    b1 = b0;
+    b0 = x * b1 - b2 + *p++;
+  }
+  while (--i);
+  return (0.5 * (b0 - b2));
+}
+
+float i0(float x)
+{
+  float y;
+
+  if (x < 0)
+    x = -x;
+  if (x <= 8.0) {
+    y = (x / 2.0) - 2.0;
+    return (float)(exp(x) * chbevl(y, A, 30));
+  }
+  return (float)(exp(x) * chbevl(32.0 / x - 2.0, B, 25) / sqrt(x));
+}
+
+int kaiser_window_2( float beta, int M, float *window )
 {
   // # Docstring adapted from NumPy's kaiser function
   // if _len_guards(M):
@@ -254,7 +309,7 @@ int kaiser( float beta, int M, float *window )
 
   return result;
 }
-
+/*********************** End of Generate Kaiser Window *********************/
 
 
 float freq_from_fft(float* signal, int N, int dft_elements, float fs) {
@@ -284,6 +339,7 @@ float freq_from_fft(float* signal, int N, int dft_elements, float fs) {
     float* abs_f = (float*)malloc(computed_dft_len * sizeof(float));
     float* kaiser_window = (float*)malloc(N * sizeof(float));
     float beta = 100.0;
+    // double magnitude[N];
     kaiser(beta, N, kaiser_window);
     // Apply Kaiser window
     for (int n = 0; n < N; n++) {
@@ -292,14 +348,19 @@ float freq_from_fft(float* signal, int N, int dft_elements, float fs) {
     
     // apply dft to windowed signal with dft_elements
     //please call cmsis dft function.
-    dft(windowed, f, dft_elements);
-    
+    // dft(windowed, f, dft_elements);
+    compute_dft(f, signal, dft_elements);
+    for(int j=0; j<10;j++)
+    {
+        printf("%f\n",f[j]);
+    }
+
     // Find the peak
     int i_peak = 0;
     float max_val = 0.0;
     for (int i = 0; i < computed_dft_len; i++) {
         abs_f[i] = sqrt(windowed[i] * windowed[i]); // Assuming f is complex
-        printf("%d.abs_f[i] is %f\n",i,abs_f[i]);
+        // printf("%d.abs_f[i] is %f\n",i,abs_f[i]);
         if (abs_f[i] > max_val) {
             max_val = abs_f[i];
             i_peak = i;
@@ -357,7 +418,7 @@ void detectAudio(float* signal, int sig_len, int sr, int dft_len, float wanted_f
         free(window);
         return;
     }
-    dft(window, fftData, _dft_elements);
+    dft_1(window, fftData, _dft_elements);
     // int targetIndex = (int)((float)sig_len * testFreq / sr);// get the bin we want to calculate maganitude
     int targetIndex = (int)((float)_dft_elements * testFreq / sr);
     float magnitude = sqrt(fftData[targetIndex] * fftData[targetIndex]);//cbs(fftData[targetIndex]);
