@@ -7,7 +7,7 @@
 
 // #ifndef _RFFT_H 
 // #define _RFFT_H
-#define M_PI        3.14159265358979323846
+// #define M_PI        3.14159265358979323846
 #define PI          3.1415926535897932384626433832795
 // #define M_SQRT2     1.41421356237309504880
 // #define RFFT_LEN  1024
@@ -16,8 +16,8 @@
 // #define PI          3.1415926
 // #define pi          3.14159265358979
 
-void kaiser_window(double *window, int size, double beta);
-double bessel_i0(double x);
+void compute_kaiser_window(float *window, int size, float beta);
+float bessel_i0(float x);
 
 float chbevl(float x, float array[], int n);
 float i0(float x);
@@ -229,10 +229,10 @@ void compute_magnitude(double complex X[], double magnitude[], int N) {
 }
 /*********************** End Of Maganitude Section*********************/
 /************************** Generate Kaiser Window *************************/
-double bessel_i0(double x) {
-    double sum = 1.0;
-    double term = 1.0;
-    double x_2 = x / 2.0;
+float bessel_i0(float x) {
+    float sum = 1.0;
+    float term = 1.0;
+    float x_2 = x / 2.0;
     
     for (int i = 1; i <= 50; i++) {
         term *= (x_2 * x_2) / (i * i);
@@ -243,13 +243,13 @@ double bessel_i0(double x) {
     return sum;
 }
 
-void kaiser_window(double *window, int size, double beta) {
+void compute_kaiser_window(float *window, int size, float beta) {
 /*
 window:array to put kaiser window values
 size:length of window
 */
-    double arg;
-    double denom = bessel_i0(beta);
+    float arg;
+    float denom = bessel_i0(beta);
     
     for (int n = 0; n < size; n++) {
         arg = beta * sqrt(1 - pow((2.0 * n / (size - 1) - 1), 2));
@@ -337,19 +337,19 @@ float freq_from_fft(float* signal, int N, int dft_elements, float fs) {
     // float* abs_f = (float*)malloc((N/2 + 1) * sizeof(float));
     float* log_abs_f = (float*)malloc(computed_dft_len * sizeof(float));
     float* abs_f = (float*)malloc(computed_dft_len * sizeof(float));
-    float* kaiser_window = (float*)malloc(N * sizeof(float));
+    // float* kaiser_window = (float*)malloc(N * sizeof(float));
     float beta = 100.0;
     // double magnitude[N];
-    kaiser(beta, N, kaiser_window);
-    // Apply Kaiser window
-    for (int n = 0; n < N; n++) {
-        windowed[n] = signal[n] * kaiser_window[n];
-    }
+    // compute_kaiser_window(kaiser_window, N, beta);
+    // // Apply Kaiser window
+    // for (int n = 0; n < N; n++) {
+    //     windowed[n] = signal[n] * kaiser_window[n];
+    // }
     
     // apply dft to windowed signal with dft_elements
     //please call cmsis dft function.
     // dft(windowed, f, dft_elements);
-    compute_dft(f, signal, dft_elements);
+    compute_dft(f, windowed, dft_elements);
     for(int j=0; j<10;j++)
     {
         printf("%f\n",f[j]);
