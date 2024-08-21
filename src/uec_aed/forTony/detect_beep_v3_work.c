@@ -176,40 +176,6 @@ void find(int* condition, int size, int** res, int* res_size) {
     *res = (int*)realloc(*res, (*res_size) * sizeof(int));
 }
 /*************************** DFT Calculation Section************************/
-void dft_1(float x[], float result[], int num_elems) {
-  // See: "modified C code" from https://batchloaf.wordpress.com/2013/12/07/simple-dft-in-c/ 
-  // to simplify does not use pre-computed cos/sin(z)
-  for(int k = 0; k < num_elems; k++) {
-    float xre[num_elems]; // Real component
-    float xim[num_elems]; // Imaginary component
-    for(int n = 0; n < num_elems; n++) {
-      float z = (2 * M_PI * k * n) / num_elems;
-      xre[n] += x[n] * cos(z);
-      xim[n] -= x[n] * sin(z);
-    }
-    result[k] = (xre[k] * xre[k]) * (xim[k] * xim[k]);
-  }
-}
-
-/* DFT: h is the input vector of lenth N */
-// complex *dft_2(complex *h, ulint N){
-        
-//         complex *H, aux;
-//         register ulint n, k;
-                
-//         H=makecm(N, 1);
-//         cm_zero(H, N, 1);
-        
-//         for(n=0; n<N; n++){
-//             for(k=0; k<N; k++){
-//                 aux.Re=cos((double)(2*PI*k*n)/N);
-//                 aux.Im=sin((double)(2*PI*k*n)/N);
-//                 H[n]=cadd(H[n], cmult(h[k], aux));
-//             }
-//         }
-        
-//         return H;
-// }
 
 void compute_dft(float fftData[], float signal[], int N) {
 /*
@@ -425,23 +391,13 @@ float freq_from_fft(float* signal, int N, int dft_elements, float fs, float* mag
     // float* abs_f = (float*)malloc((N/2 + 1) * sizeof(float));
     float* log_abs_f = (float*)malloc(computed_dft_len * sizeof(float));
     float* abs_f = (float*)malloc(computed_dft_len * sizeof(float));
-    // float* kaiser_window = (float*)malloc(N * sizeof(float));
-    float beta = 100.0;
-    // double magnitude[N];
-    // compute_kaiser_window(kaiser_window, N, beta);
-    // // Apply Kaiser window
-    // for (int n = 0; n < N; n++) {
-    //     windowed[n] = signal[n] * kaiser_window[n];
-    // }
-    
-    // apply dft to windowed signal with dft_elements
+    //we don't use kaiser window here.
     //please call cmsis dft function.
-    // dft(windowed, f, dft_elements);
     compute_dft(f, signal, dft_elements);
-    for(int j=0; j<10;j++)
-    {
-        printf("%f\n",f[j]);
-    }
+    // for(int j=0; j<10;j++)
+    // {
+    //     printf("%f\n",f[j]);
+    // }
 
     // Find the peak
     int i_peak = 0;
@@ -563,56 +519,6 @@ int main(void)
     return 0;
 }
 
-
-int main_bak(void)
-{
-    /*
-        signature
-        freq_from_fft(float* signal, int N, int dft_elements, float fs, float* result);
-    */
-    int wav_len = sizeof(wav_array)/sizeof(wav_array[0]);
-    int _dft_len = 2048;
-    float* wav_sig = (float*)malloc(wav_len * sizeof(float));
-    if (wav_sig == NULL) {
-        fprintf(stderr, "wav_sig Memory allocation failed\n");
-        return 0;
-    }
-    // for(int idx=0; idx<wav_len; idx++)
-    // {
-    //     wav_sig[idx] = (float)wav_array[idx];
-    // }
-    for (int i = 0; i < wav_len; i++) {
-        wav_sig[i] = wav_array[i] * (0.54 - 0.46 * cos(2 * M_PI * i / (wav_len - 1)));
-    }
-    float _sr = 20000.0;
-    float _mag = 0.0;
-    float ret_freq = freq_from_fft(wav_sig, wav_len, _dft_len, _sr, &_mag);
-
-    float* fftData = (float*)malloc(wav_len * sizeof(float));
-    if (fftData == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        free(wav_sig);
-        return 0;
-    }
-    compute_dft(fftData, wav_sig, wav_len);
-    int targetIndex = (int)((float)wav_len * ret_freq / _sr);
-    float magnitude = sqrt(fftData[targetIndex] * fftData[targetIndex]);
-    printf("targetIndex is %d, and magnitude is %f\n",targetIndex, magnitude);
-    printf("ret_freq is %f\n", ret_freq);
-    printf("return mag is %f", _mag);
-
-    // double* wav_sig = (double*)malloc(wav_len * sizeof(double));
-    //convert int array to float array
-    // for(int idx=0; idx<wav_len; idx++)
-    // {
-    //     wav_sig[idx] = (double)wav_array[idx];
-    // }
-    // double _sr = 20000.0;
-    // double ret_freq = freq_from_autocorr(wav_sig, wav_len, _sr);
-    // printf("ret_freq is %lf", ret_freq);
-    
-    return 0;
-}
 
 
 
