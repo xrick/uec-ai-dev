@@ -274,7 +274,9 @@ Parameters:
     wanted_freq: golden frequency of standard sound we want to detect,
                  for example, beep:3078.918213(estimated by dft)
     magthreshold: the threshold of magnitude.
-    freqthreshold:the threshold of frequency.
+    freqthreshold:the threshold is to test whether the absolute value of
+                  golden sample frequence minus input signal frequence
+                  smaller than it.
 return:
     1: The input sound matches the wanted_freq and maganitude is also equal or greater than the magthreshold
     98: Wanted Frequency detected, but no significant magnitude.
