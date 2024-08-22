@@ -266,20 +266,15 @@ float freq_from_fft(float* signal, int N, int dft_elements, float fs, float* mag
 int detectAudio(float* signal, int sig_len, float sr, int dft_len, float wanted_freq, float magthreshold, float freqthreshold)
 {
 /*
-Parameters:
     signal: input wav signal, need to be float.
     sig_len: length of signal.
     sr: sampling, need to be float for float computation.
     dft_len: the points we want to compute in dft algorithm.
     wanted_freq: golden frequency of standard sound we want to detect,
-                 for example, beep:3078.918213(estimated by dft)
-    magthreshold: the threshold of magnitude.
-    freqthreshold:the threshold of frequency.
-return:
-    1: The input sound matches the wanted_freq and maganitude is also equal or greater than the magthreshold
-    98: Wanted Frequency detected, but no significant magnitude.
-    99: wanted frequency is not found
+                 for example, beep:
 */
+    // float testFreq = freq_func(signal, sr);
+    // float testFreq=0.0;
     float _mag = 0.0;
     float testFreq = freq_from_fft(signal, sig_len, dft_len, sr, &_mag);
 
@@ -317,14 +312,25 @@ return:
             return 1;
         } else {
             printf("Wanted Frequency detected: %f Hz but no significant magnitude: %f\n", testFreq, magnitude);
-            return 98;
+            return 0;
         }
     } else {
         printf("wanted frequency: %f is not found, found frequency: %f and magnitude is %f\n", wanted_freq, testFreq, magnitude);
-        return 99;
+        return 0;
     }
+    // free(fftData_re);
+    // free(fftData_im);
 }
 
+void changeArrayTest(int ary1[])
+{
+    ary1[0] = 100;
+    ary1[1] = 200;
+}
+// int ageArray[] = {2, 8, 4, 12};
+// printf("ageArray[0] is %d before changeArrayTest\n",ageArray[0]);
+// changeArrayTest(ageArray);
+// printf("ageArray[0] is %d",ageArray[0]);
 
 int main(void)
 {
